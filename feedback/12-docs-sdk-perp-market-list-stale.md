@@ -14,7 +14,7 @@ The pages match the chain.
 `getPerpPools()` returns 21 pools. Missing from the Contracts page: ZEC `0x2A73…F050`, PUMP `0x76C9…36E7`, 1000PEPE `0xfa9B…6B6F`, VVV `0x3526…6409`, LIT `0xdCb0…2a3F`, ZRO `0x2a18…F16c`.
 
 ## Evidence
-Chain read above, 2026-10-24.
+Chain read above, 2026-10-26.
 
 ## Environment
 Hideki testnet (50383) · markets-sdk 0.32.1
