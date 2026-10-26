@@ -21,7 +21,7 @@ None of these appear (spot errors only):
 | VoucherMarketNotAllowed() | 0x649b887d |
 
 ## Evidence
-Page text checked 2026-10-24. Selectors = keccak256 of each signature.
+Page text checked 2026-10-26. Selectors = keccak256 of each signature.
 
 ## Environment
 Any browser
