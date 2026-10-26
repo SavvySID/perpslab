@@ -3,7 +3,7 @@ Severity: normal
 Area: docs
 
 ## Steps to reproduce
-Run the "One-shot reads" sample (https://somnia-platform-docs.vercel.app/markets/somnia-markets/typescript/perps, `docs/PERPS.md` ~line 1206):
+Run the "One-shot reads" sample (https://somnia-platform-docs.vercel.app/markets/somnia-markets/typescript/perps, `docs/PERPS.md:1208` in the package):
 ```ts
 const perps = await client.listPerpMarkets({ baseSymbol: "WBTC", limit: 20 });
 const one = await client.getPerpMarket(perps[0].id);
