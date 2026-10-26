@@ -19,10 +19,12 @@ Or: `eth_call` from the address to `0x2ACD9EFdA721450906bfE1bef3edE269636E42C4` 
 eligibility {"eligible":true,"grantAmount":"1000000000000000000000"}
 claim reverted: for an unknown reason.     raw revert data: 0x3e31dcc2
 ```
-`0x3e31dcc2` = `SelfClaimDisabled()`. A developer following the docs gets no test margin and can't trade.
+`0x3e31dcc2` = keccak256(`SelfClaimDisabled()`). A developer following these steps gets no test margin.
 
 ## Evidence
-Address `0x4E032bc4CC380710109B7681204701595fb0C9bA` (funded in tx `0xd68446b56e0e964893a2d67883f5ea76a159ada10e109bda35c27fe941b2e2c0`). Vouchers are only granted by the app (e.g. tx `0x69d9c52f92343bd9034707becebde06f78e871cda5c27b358e785cbc8b85da00`).
+- Address `0x4E032bc4CC380710109B7681204701595fb0C9bA`, funded with 1.5 STT in tx `0xd68446b56e0e964893a2d67883f5ea76a159ada10e109bda35c27fe941b2e2c0`.
+- Same result today for a second fresh key, `0x742558d9B28A55FEF29b9772D739C9DFAabf57ee`.
+- Paper USDso reaches accounts through a grant sent to the VoucherDistributor by another address instead, e.g. tx `0x69d9c52f92343bd9034707becebde06f78e871cda5c27b358e785cbc8b85da00`, which credited our two app wallets.
 
 ## Environment
-@somnia-chain/markets-sdk 0.32.1 · Node 22.17 · Hideki testnet (50383) · re-checked 2026-10-24
+@somnia-chain/markets-sdk 0.32.1 · Node 22.17 · Hideki testnet (50383) · re-checked 2026-10-26
