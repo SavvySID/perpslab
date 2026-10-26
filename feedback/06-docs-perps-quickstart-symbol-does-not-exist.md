@@ -3,7 +3,7 @@ Severity: normal
 Area: docs
 
 ## Steps to reproduce
-1. Follow the Quick start at https://somnia-platform-docs.vercel.app/markets/somnia-markets/typescript/perps (also `docs/PERPS.md` ~line 1196).
+1. Follow the Quick start at https://somnia-platform-docs.vercel.app/markets/somnia-markets/typescript/perps (also `docs/PERPS.md:1191-1200` in the package).
 2. `await exchange.loadMarkets(); await exchange.fetchFundingRate("BTC/USDSO:USDSO")`
 
 ## Expected
@@ -15,7 +15,7 @@ InvalidInputError: unknown symbol BTC/USDSO:USDSO — call loadMarkets() first
 ```
 
 ## Evidence
-Live symbols use the token's real case: `BTC/USDso:USDso`. The same wrong symbol is in the `fetchFundingRateHistory` docblock (`src/unified/exchange.ts:5686`). The error also wrongly blames `loadMarkets()`.
+Live symbols use the token's real case: `BTC/USDso:USDso`. The same wrong symbol is in the `fetchFundingRateHistory` docblock (`src/unified/exchange.ts:5687`). The error also wrongly blames `loadMarkets()`.
 
 ## Environment
 @somnia-chain/markets-sdk 0.32.1 · Node 22.17 · Hideki testnet (50383)
