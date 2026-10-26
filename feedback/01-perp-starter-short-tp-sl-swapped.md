@@ -12,7 +12,7 @@ Short: take-profit = mark × 0.98, stop-loss = mark × 1.01.
 ## Actual
 Short: take-profit = mark × 0.99, stop-loss = mark × 1.02.
 ```
-[dry-run] would arm a short bracket on ETH-PERP: take-profit 2373.47, stop-loss 2445.39   (mark ≈ 2397.44)
+[dry-run] would arm a short bracket on ETH-PERP: take-profit 2294.42, stop-loss 2363.95   (mark ≈ 2317.6, 2026-10-26)
 ```
 
 ## Evidence
