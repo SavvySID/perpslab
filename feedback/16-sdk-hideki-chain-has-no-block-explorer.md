@@ -15,7 +15,9 @@ console.log(hidekiTestnet.blockExplorers, somniaShannon.blockExplorers);
 `undefined` for hidekiTestnet; Shannon and mainnet both define one.
 
 ## Evidence
-`https://explorer.testnet.somnia.network/tokyo` returns 200. Wallets/viem tools using the SDK chain can't link perps transactions.
+- `src/chains/definitions/hidekiTestnet.ts:38`: "No public block explorer is known for Hideki, so that field stays unset."
+- But /docs/developers/perps-testnet lists "Explorer explorer.testnet.somnia.network/tokyo", and it serves Hideki pages: `https://explorer.testnet.somnia.network/tokyo/address/0x478769E1177C0773c43A593DCCc4Ad15F15F1394` returns 200.
+- Wallets and viem tools using the SDK chain get no transaction links on the perps chain.
 
 ## Environment
 @somnia-chain/markets-sdk 0.32.1 · Node 22.17
