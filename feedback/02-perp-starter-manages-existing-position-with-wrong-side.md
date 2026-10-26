@@ -3,21 +3,24 @@ Severity: major
 Area: SDK
 
 ## Steps to reproduce
-1. Hold a short on ETH-PERP in the account.
-2. `NETWORK=hideki PERP_SYMBOL=ETH-PERP OWNER_ADDRESS=<that account> DRY_RUN=true npm start -w perp-starter` (default PERP_SIDE=long)
+1. Hold a short in the account (here: 3.99 SOL short on `0xf65EAcaE6AB6cA8a62d7B60Adde4946D3FFf25B8`).
+2. `NETWORK=hideki PERP_SYMBOL=SOL-PERP OWNER_ADDRESS=0xf65EAcaE6AB6cA8a62d7B60Adde4946D3FFf25B8 DRY_RUN=true npx tsx strategies/perp-starter/src/index.ts` (default PERP_SIDE=long)
 
 ## Expected
-Exit levels for the held short (TP below mark, SL above), or refuse to start when PERP_SIDE disagrees with the position.
+Exit levels for the held short (take-profit below the mark, stop-loss above), or a refusal to start when PERP_SIDE disagrees with the position.
 
 ## Actual
 ```
-already short 2.2873 ETH, managing it instead of opening another
-[dry-run] would watch take-profit 2444.04 and stop-loss 2372.15
+already short 3.99 SOL, managing it instead of opening another
+[dry-run] would watch take-profit 104.30 and stop-loss 101.24      (mark ≈ 102.26)
 ```
-Long-side levels on a short: it would close the short after a 2% adverse move as "take-profit".
+These are long-side levels on a short. Live, the bot closes the short as "take-profit" after a 2% move against it, and as "stop-loss" after a 1% move in its favour.
 
 ## Evidence
-`strategies/perp-starter/src/index.ts`: `existing` is detected at `:121-123`, but levels (`:176-177`), `armBracket({ position: SIDE })` (`:187`) and watched-exit checks (`:224-225`) all use `SIDE`.
+`strategies/perp-starter/src/index.ts`: `existing` is detected at `:121-123`, but every level uses `SIDE`:
+- the levels at `:176-177`
+- the watched-exit checks at `:224-225`
+- `armBracket({ position: SIDE })` at `:187`, which in own-key mode arms long-closing sell stops for a short
 
 ## Environment
-dreamdex-bot-kit @ 2579866 (markets-sdk 0.31.0) · Node 22.17 · Hideki testnet (50383)
+dreamdex-bot-kit @ 2579866 (markets-sdk 0.31.0) · Node 22.17 · Hideki testnet (50383) · checked 2026-10-26
