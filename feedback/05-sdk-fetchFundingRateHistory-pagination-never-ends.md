@@ -18,10 +18,13 @@ The last call returns 0 rows; no row has `timestamp < since`.
 
 ## Actual
 ```
-iter 4: since=1792840303001 -> 1 rows, first=1792840303000 last=1792840303000
-iter 5: since=1792840303001 -> 1 rows, first=1792840303000 last=1792840303000
+iter 0: since=1792853585077 -> 48 rows, first=1792854703000 last=1793023903000
+iter 1: since=1793023903001 -> 1 rows, first=1793023903000 last=1793023903000
+iter 2: since=1793023903001 -> 1 rows, first=1793023903000 last=1793023903000
+...
+iter 5: since=1793023903001 -> 1 rows, first=1793023903000 last=1793023903000
 ```
-The same row returns forever.
+The same row, older than `since`, comes back forever (run 2026-10-26).
 
 ## Evidence
 `src/unified/exchange.ts:5707`: `from: Math.floor(since / 1000)` used as an inclusive bound, so `last + 1 ms` floors back to the last row's second. Fix: `Math.ceil`, or filter `ts >= since` like `fetchOHLCV`.
