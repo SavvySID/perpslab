@@ -13,7 +13,7 @@ The skill repo opens.
 `404`
 
 ## Evidence
-curl output above, 2026-10-24.
+curl output above, 2026-10-26. The same dead link is also on https://app.testnet.dreamdex.io/docs/developers/contracts/spot-router.
 
 ## Environment
 Any browser / curl
