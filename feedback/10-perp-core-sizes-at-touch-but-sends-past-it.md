@@ -7,7 +7,7 @@ Area: SDK
 2. `NETWORK=hideki PRIVATE_KEY=<bot> OWNER_ADDRESS=<wallet> PERP_SYMBOL=ETH-PERP PERP_SIDE=long PERP_LEVERAGE=20 PERP_NOTIONAL_USDSO=19900 DRY_RUN=false npx tsx strategies/perp-starter/src/index.ts`
 
 ## Expected
-The "clamped" size is placeable.
+When collateral clamps the size, the clamped order is placeable.
 
 ## Actual
 ```
@@ -17,11 +17,15 @@ The contract function "placeOrderFor" reverted.  Error: InsufficientCollateral()
 ```
 
 ## Evidence
-Same account, same block 30344092, `getMaxPerpOrderSize`:
-- at best ask 2394.82: max **8.2414** ETH
-- at sent price 2399.6 (+20 bps): max **7.9141** ETH
-
-`sizeOrder()` gets `price: touch`, then `placePerp()` adds slippage (`packages/perp-core/src/orders.ts:151-159`). Callers: perp-starter `:132-154`, perp-funding `:136-148`. Fix: size at the slipped price.
+The same thing, all in one block (33741984), as `eth_call` from bot `0x742558d9B28A55FEF29b9772D739C9DFAabf57ee` for owner `0xf65EAcaE6AB6cA8a62d7B60Adde4946D3FFf25B8`:
+```
+ETH best ask 2319.55 | price perp-core sends 2324.18 (+20 bps)
+getMaxPerpOrderSize at best ask (what sizeOrder() returns): 8.4207 ETH
+placeOrderFor IOC 8.4207 @ best ask  -> OK
+placeOrderFor IOC 8.4207 @ ask+20bps -> InsufficientCollateral
+getMaxPerpOrderSize at ask+20bps: 8.0115 ETH
+```
+`sizeOrder()` is given `price: touch`, then `placePerp()` adds 20 bps for takers (`packages/perp-core/src/orders.ts:151-159`). Callers: perp-starter `:126-154`, perp-funding `:131-148`. Fix: size at the slipped price.
 
 ## Environment
-dreamdex-bot-kit @ 2579866 (markets-sdk 0.31.0) · Node 22.17 · Hideki testnet (50383) · bot `0x742558d9B28A55FEF29b9772D739C9DFAabf57ee`
+dreamdex-bot-kit @ 2579866 (markets-sdk 0.31.0) · Node 22.17 · Hideki testnet (50383) · re-checked 2026-10-26
