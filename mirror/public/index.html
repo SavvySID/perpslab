@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mirror</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #14161a; --muted: #5d6470; --line: #e3e6ea;
+    --accent: #5b4bdb; --good: #12805c; --bad: #c0392b; --chip: #eef0f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1115; --panel: #171a20; --text: #e8eaed; --muted: #9aa1ab; --line: #262a32;
+      --accent: #8f83ff; --good: #3ccf91; --bad: #ff6b5e; --chip: #20242c; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; }
+  h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+  h1 span { color: var(--muted); font-weight: 500; font-size: 15px; margin-left: 8px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 28px 0 10px; }
+  .badge { padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; background: var(--chip); }
+  .badge.live { background: var(--good); color: #fff; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 18px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+  .label { color: var(--muted); font-size: 12px; }
+  .value { font-size: 20px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .addr { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .table { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  tr:last-child td { border-bottom: 0; }
+  .buy { color: var(--good); font-weight: 600; } .sell { color: var(--bad); font-weight: 600; }
+  .ok { color: var(--good); } .fail { color: var(--bad); }
+  .empty { color: var(--muted); padding: 16px 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  button, .button { border: 1px solid var(--line); background: var(--panel); color: var(--text); border-radius: 8px;
+    padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  .button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  code { background: var(--chip); padding: 2px 6px; border-radius: 6px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Mirror <span>copy-trading for dreamDEX perps</span></h1>
+    <span id="mode" class="badge">loading…</span>
+  </header>
+
+  <div class="grid">
+    <div class="card"><div class="label">Copying (leader)</div><div class="addr" id="leader">–</div><div class="label" id="leaderEq"></div></div>
+    <div class="card"><div class="label">Into (your wallet)</div><div class="addr" id="follower">–</div><div class="label" id="followerEq"></div></div>
+    <div class="card"><div class="label">Scale</div><div class="value" id="scale" style="font-size:16px">–</div><div class="label" id="caps"></div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="label">Leader trades seen</div><div class="value" id="events">0</div><div class="label" id="lastEvent">via Somnia Reactivity</div></div>
+    <div class="card"><div class="label">Orders copied</div><div class="value" id="copied">0</div><div class="label" id="orders"></div></div>
+    <div class="card"><div class="label">Avg reaction</div><div class="value" id="reaction">–</div><div class="label">leader fill → your fill confirmed</div></div>
+    <div class="card"><div class="label">Failures</div><div class="value" id="failures">0</div><div class="label">retried after 60 s</div></div>
+  </div>
+
+  <h2>Markets</h2>
+  <div class="table"><table>
+    <thead><tr><th>Market</th><th>Leader</th><th>Your target</th><th>You</th><th>Mark</th><th>Status</th></tr></thead>
+    <tbody id="markets"><tr><td class="empty" colspan="6">Waiting for the leader's positions…</td></tr></tbody>
+  </table></div>
+
+  <h2>Activity</h2>
+  <div class="table"><table>
+    <thead><tr><th>Time</th><th>Market</th><th>Side</th><th>Size</th><th>Price</th><th>Filled</th><th>Result</th><th>Reaction</th><th>Tx</th></tr></thead>
+    <tbody id="activity"><tr><td class="empty" colspan="9">No copied trades yet.</td></tr></tbody>
+  </table></div>
+
+  <div class="actions">
+    <a id="share" class="button primary" target="_blank" rel="noopener">Share on X</a>
+    <button id="copyCmd">Copy "follow this trader" command</button>
+  </div>
+  <p class="label" id="cmdHint"></p>
+</main>
+<script>
+  const $ = (id) => document.getElementById(id)
+  const short = (a) => a ? a.slice(0, 6) + "…" + a.slice(-4) : "–"
+  const num = (x, max = 6) => x === null || x === undefined ? "–" : Number(x).toLocaleString(undefined, { maximumFractionDigits: max })
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c])
+  let last = null
+
+  async function refresh() {
+    let s
+    try { s = await (await fetch("/api/state")).json() } catch { return }
+    last = s
+    $("mode").textContent = s.dryRun ? "DRY RUN" : "LIVE"
+    $("mode").className = "badge" + (s.dryRun ? "" : " live")
+    $("leader").innerHTML = `<a href="${s.app}/trader/${s.leader}?tab=positions" target="_blank" rel="noopener">${short(s.leader)}</a>`
+    $("follower").innerHTML = `<a href="${s.app}/trader/${s.follower}?tab=positions" target="_blank" rel="noopener">${short(s.follower)}</a>`
+    $("leaderEq").textContent = `equity ${num(s.equity.leader, 2)} USDso`
+    $("followerEq").textContent = `equity ${num(s.equity.follower, 2)} USDso · bot ${short(s.bot)}`
+    $("scale").textContent = s.scale
+    $("caps").textContent = `max ${s.maxNotionalUsdso} USDso per market · ${s.copyExisting ? "copies existing positions" : "copies new trades only"}`
+    $("events").textContent = s.stats.events
+    $("lastEvent").textContent = s.stats.lastEventAt ? `last ${Math.round((Date.now() - s.stats.lastEventAt) / 1000)} s ago, via Somnia Reactivity` : "via Somnia Reactivity"
+    $("copied").textContent = s.stats.copied
+    $("orders").textContent = `${s.stats.orders} orders sent`
+    $("reaction").textContent = s.stats.avgReactionMs === null ? "–" : `${(s.stats.avgReactionMs / 1000).toFixed(2)} s`
+    $("failures").textContent = s.stats.failures
+
+    $("markets").innerHTML = s.markets.length ? s.markets.map((m) => `<tr>
+      <td><b>${esc(m.symbol)}</b></td><td>${num(m.leader)}</td><td>${num(m.target)}</td><td>${num(m.follower)}</td>
+      <td>${num(m.mark, 4)}</td><td>${esc(m.status)}</td></tr>`).join("")
+      : `<tr><td class="empty" colspan="6">Waiting for the leader's positions…</td></tr>`
+
+    $("activity").innerHTML = s.actions.length ? s.actions.map((a) => `<tr>
+      <td>${new Date(a.at).toLocaleTimeString()}</td><td><b>${esc(a.symbol)}</b></td><td class="${a.side}">${a.side}</td>
+      <td>${num(a.quantity)}</td><td>${num(a.price, 4)}</td><td>${a.filled ? num(a.filled) : "–"}</td>
+      <td class="${a.ok ? "ok" : "fail"}">${esc(a.note)}</td>
+      <td>${a.reactionMs !== undefined && a.reactionMs !== null ? (a.reactionMs / 1000).toFixed(2) + " s" : "–"}</td>
+      <td>${a.hash ? `<a href="${s.explorer}/tx/${a.hash}" target="_blank" rel="noopener">${short(a.hash)}</a>` : "–"}</td></tr>`).join("")
+      : `<tr><td class="empty" colspan="9">No copied trades yet.</td></tr>`
+
+    const avg = s.stats.avgReactionMs === null ? "" : `, ${(s.stats.avgReactionMs / 1000).toFixed(2)} s from their fill to mine`
+    const text = `I'm mirroring ${short(s.leader)} on @DreamDEXSomnia perps with Mirror: ${s.stats.copied} trades copied${avg}. Copy-trading on Somnia, powered by Reactivity.`
+    $("share").href = "https://x.com/intent/post?text=" + encodeURIComponent(text)
+  }
+
+  $("copyCmd").onclick = async () => {
+    if (!last) return
+    const cmd = `LEADER=${last.leader} npm start`
+    try { await navigator.clipboard.writeText(cmd); $("cmdHint").textContent = `Copied: ${cmd}` }
+    catch { $("cmdHint").textContent = cmd }
+  }
+
+  refresh()
+  setInterval(refresh, 2000)
+</script>
+</body>
+</html>
