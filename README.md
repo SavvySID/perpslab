@@ -11,6 +11,12 @@ Tools, experiments, and feedback for dreamDEX perpetual trading on Somnia Tokyo 
 
 ## Projects
 
+### Mirror (MVP track)
+
+Copy-trading for dreamDEX perps. Pick any trader, and Mirror copies their position changes into your perps account within seconds, scaled to your equity and capped per market. It listens for the leader's fills through Somnia Reactivity, places IOC orders for you through the app's Link a Bot grant (so it can trade but never withdraw), and shows everything on a local dashboard with a Share on X button.
+
+See [`mirror/README.md`](./mirror/README.md) for what it does, who it's for and how to run it.
+
 ### DreamPerps
 
 A testnet perps tool built with `@somnia-chain/markets-sdk` 0.32.1.
@@ -77,10 +83,9 @@ A perps order placed by this code on Somnia Tokyo testnet and confirmed on-chain
 
 ## Project Structure
 
+- `mirror/` — Mirror, the MVP: copy-trading bot, trader inspector, dashboard and unit tests.
 - `dreamperps/` — SDK integration: market reads and order placement.
 - `feedback/` — Reproducible feedback reports for the Feedback track.
-- `app/` — Perps MVP application.
-- `tests/` — Integration tests and experiments.
 
 ## Network
 
